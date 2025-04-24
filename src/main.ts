@@ -34,7 +34,7 @@ class PaperlibObsidianExtension extends PLExtension {
     PLMainAPI.contextMenuService.registerContextMenu(this.id, [
       {
         id: "open-in-obsidian",
-        label: "在 Obsidian 中打开",
+        label: "Open in Obsidian",
       }
     ]);
 
@@ -149,9 +149,10 @@ class PaperlibObsidianExtension extends PLExtension {
       params.append("year", paper.pubTime || "");
       params.append("doi", paper.doi || "");
 
-      // 构造 obsidian:// URL
-      const url = `obsidian://paperlib-open?${params.toString()}`;
-      
+      // 构造 obsidian:// URL，并将 + 替换为 %20
+      const query = params.toString().replace(/\+/g, '%20');
+      const url = `obsidian://paperlib-open?${query}`;
+
       // 使用 macOS open 命令打开 URL
       try {
         const execAsync = promisify(exec);
