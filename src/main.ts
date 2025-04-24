@@ -1,3 +1,5 @@
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { PLAPI, PLExtAPI, PLExtension, PLMainAPI } from "paperlib-api/api";
 import { PaperEntity } from "paperlib-api/model";
 
@@ -122,6 +124,22 @@ class PaperlibObsidianExtension extends PLExtension {
         "ObsidianIntegration"
       );
 
+      // 获取扩展设置
+      const enableProtocolHandler = await PLExtAPI.extensionPreferenceService.get(
+        this.id,
+        "enableProtocolHandler"
+      );
+
+      if (!enableProtocolHandler) {
+        PLAPI.logService.warn(
+          "Protocol handler is disabled in settings",
+          "",
+          true,
+          "ObsidianIntegration"
+        );
+        return;
+      }
+
       // 构造 URL 参数，确保所有值都是字符串类型
       const params = new URLSearchParams();
       // 将 ObjectId 转换为字符串
@@ -132,10 +150,15 @@ class PaperlibObsidianExtension extends PLExtension {
       params.append("doi", paper.doi || "");
 
       // 构造 obsidian:// URL
-      const url = `obsidian://paperlib?${params.toString()}`;
+      const url = `obsidian://paperlib-open?${params.toString()}`;
       
-      // 在默认浏览器中打开 URL
-      window.open(url);
+      // 使用 macOS open 命令打开 URL
+      try {
+        const execAsync = promisify(exec);
+        await execAsync(`open "${url}"`);
+      } catch (err) {
+        throw new Error(`Failed to open Obsidian: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      }
       
       PLAPI.logService.info(
         "Paper opened in Obsidian",
