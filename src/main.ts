@@ -2,6 +2,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { PLAPI, PLExtAPI, PLExtension, PLMainAPI } from "paperlib-api/api";
 import { PaperEntity } from "paperlib-api/model";
+import os from 'os';
 
 class PaperlibObsidianExtension extends PLExtension {
   disposeCallbacks: (() => void)[];
@@ -153,10 +154,20 @@ class PaperlibObsidianExtension extends PLExtension {
       const query = params.toString().replace(/\+/g, '%20');
       const url = `obsidian://paperlib-open?${query}`;
 
-      // 使用 macOS open 命令打开 URL
+      // 跨平台支持
+      let openCmd = '';
+      const platform = os.platform();
+      if (platform === 'darwin') {
+        openCmd = `open "${url}"`;
+      } else if (platform === 'win32') {
+        openCmd = `start "" "${url}"`;
+      } else {
+        openCmd = `xdg-open "${url}"`;
+      }
+
       try {
         const execAsync = promisify(exec);
-        await execAsync(`open "${url}"`);
+        await execAsync(openCmd);
       } catch (err) {
         throw new Error(`Failed to open Obsidian: ${err instanceof Error ? err.message : 'Unknown error'}`);
       }
