@@ -2,10 +2,11 @@
   "name": "paperlib-obsidian-integration",
   "version": "1.0.0",
   "author": "Yalyenea",
-  "description": "Integrates PaperLib with Obsidian for academic paper management.",
+  "description": "Integrates PaperLib with Obsidian for academic paper note management.",
   "main": "dist/main.js",
   "type": "commonjs",
   "manifest_version": "1.0.0",
+  "homepage": "https://github.com/Yalyenea/paperlib-obsidian-plugin",
   "scripts": {
     "prebuild": "tsc --noEmit",
     "build": "tsc --noEmit && vite build"
@@ -14,15 +15,9 @@
     "node": ">=16.17.1"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@types/node": "18.16.1",
-    "paperlib-api": "^0.1.11",
-    "prettier": "^3.1.1",
-    "prettier-plugin-organize-imports": "^3.2.4",
-    "rollup-plugin-modify": "^3.0.0",
-    "typescript": "^5.1.3",
-    "vite": "^4.5.1"
+    
   },
+  
   "keywords": [
     "paperlib",
     "obsidian",
